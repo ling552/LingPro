@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' file: data:; media-src 'self' file:;">
+  <title>「零」文件</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/themes.css">
+</head>
+<body class="theme-light">
+  <!-- Custom title bar -->
+  <div class="title-bar">
+    <div class="title-bar-text">「零」文件</div>
+    <div class="title-bar-controls">
+      <button id="minimize-btn" class="control-btn">—</button>
+      <button id="maximize-btn" class="control-btn">□</button>
+      <button id="close-btn" class="control-btn">✕</button>
+    </div>
+  </div>
+
+  <!-- Main container -->
+  <div class="main-container">
+    <!-- Sidebar navigation -->
+    <div class="sidebar">
+      <div class="sidebar-item active" data-view="home">
+        <span class="sidebar-icon">🏠</span>
+        <span class="sidebar-text">主页</span>
+      </div>
+      <div class="sidebar-item" data-view="search">
+        <span class="sidebar-icon">🔍</span>
+        <span class="sidebar-text">搜索</span>
+      </div>
+      <div class="sidebar-item" data-view="settings">
+        <span class="sidebar-icon">⚙️</span>
+        <span class="sidebar-text">设置</span>
+      </div>
+    </div>
+
+    <!-- Content area -->
+    <div class="content-area">
+      <!-- Home view (file categories) -->
+      <div class="view-container" id="home-view">
+        <div class="path-navigator">
+          <button id="select-directory-btn">选择目录</button>
+          <div id="current-path">未选择目录</div>
+        </div>
+        
+        <!-- 导航栏 -->
+        <div id="navigation-bar" class="navigation-bar">
+          <!-- 导航按钮和路径显示将动态添加到这里 -->
+        </div>
+        
+        <!-- 扫描进度条 -->
+        <div class="scan-progress-container hidden">
+          <div class="scan-progress-text">扫描中... 0/0 (0%)</div>
+          <div class="scan-progress-bar-container">
+            <div class="scan-progress-bar" style="width: 0%"></div>
+          </div>
+        </div>
+        
+        <div class="category-grid">
+          <div class="category-card" data-category="images">
+            <div class="category-icon">🖼️</div>
+            <div class="category-name">图片</div>
+            <div class="category-count">0</div>
+          </div>
+          <div class="category-card" data-category="videos">
+            <div class="category-icon">🎬</div>
+            <div class="category-name">视频</div>
+            <div class="category-count">0</div>
+          </div>
+          <div class="category-card" data-category="audio">
+            <div class="category-icon">🎵</div>
+            <div class="category-name">音频</div>
+            <div class="category-count">0</div>
+          </div>
+          <div class="category-card" data-category="documents">
+            <div class="category-icon">📄</div>
+            <div class="category-name">文档</div>
+            <div class="category-count">0</div>
+          </div>
+          <div class="category-card" data-category="spreadsheets">
+            <div class="category-icon">📊</div>
+            <div class="category-name">表格</div>
+            <div class="category-count">0</div>
+          </div>
+          <div class="category-card" data-category="presentations">
+            <div class="category-icon">📑</div>
+            <div class="category-name">演示文稿</div>
+            <div class="category-count">0</div>
+          </div>
+          <div class="category-card" data-category="archives">
+            <div class="category-icon">📦</div>
+            <div class="category-name">压缩文件</div>
+            <div class="category-count">0</div>
+          </div>
+          <div class="category-card" data-category="code">
+            <div class="category-icon">📝</div>
+            <div class="category-name">代码</div>
+            <div class="category-count">0</div>
+          </div>
+          <div class="category-card" data-category="others">
+            <div class="category-icon">📄</div>
+            <div class="category-name">其他</div>
+            <div class="category-count">0</div>
+          </div>
+        </div>
+        
+        <div class="file-list-container">
+          <div class="file-list-header">
+            <div class="file-name-header">文件名</div>
+            <div class="file-size-header">大小</div>
+            <div class="file-date-header">修改日期</div>
+          </div>
+          <!-- 多文件选择工具栏 -->
+          <div id="multi-select-toolbar" class="multi-select-toolbar">
+            <button id="multi-select-btn" class="toolbar-btn" title="多选模式">
+              <span class="btn-icon">☑️</span>
+              <span class="btn-text">多选</span>
+            </button>
+            <div id="multi-select-actions" class="multi-select-actions" style="display: none;">
+              <span id="selected-count" class="selected-count">未选择文件</span>
+              <button id="select-all-btn" class="toolbar-btn" title="全选">
+                <span class="btn-icon">✓</span>
+                <span class="btn-text">全选</span>
+              </button>
+              <button id="compress-selected-btn" class="toolbar-btn" title="压缩所选文件">
+                <span class="btn-icon">📦</span>
+                <span class="btn-text">压缩</span>
+              </button>
+            </div>
+          </div>
+          <div id="file-list" class="file-list">
+            <!-- Files will be dynamically added here -->
+          </div>
+        </div>
+      </div>
+      
+      <!-- Files view (category files) -->
+      <div class="view-container hidden" id="files-view">
+        <div class="path-navigator">
+          <button id="back-to-home-btn" class="nav-btn">返回</button>
+          <div id="category-title">分类文件</div>
+        </div>
+        
+        <div class="file-list-container">
+          <div class="file-list-header">
+            <div class="file-name-header">文件名</div>
+            <div class="file-size-header">大小</div>
+            <div class="file-date-header">修改日期</div>
+          </div>
+          <div id="category-file-list" class="file-list">
+            <!-- Category files will be dynamically added here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Search view -->
+      <div class="view-container hidden" id="search-view">
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="搜索文件...">
+          <div class="search-filters">
+            <select id="search-type">
+              <option value="all">所有类型</option>
+              <option value="images">图片</option>
+              <option value="videos">视频</option>
+              <option value="audio">音频</option>
+              <option value="documents">文档</option>
+              <option value="spreadsheets">表格</option>
+              <option value="presentations">演示文稿</option>
+              <option value="archives">压缩文件</option>
+              <option value="others">其他</option>
+            </select>
+          </div>
+        </div>
+        <div id="search-results" class="file-list">
+          <!-- Search results will be dynamically added here -->
+        </div>
+      </div>
+
+      <!-- Settings view -->
+      <div class="view-container hidden" id="settings-view">
+        <h2>设置</h2>
+        
+        <div class="settings-section">
+          <h3>主题设置</h3>
+          <div class="theme-selector">
+            <div class="theme-option" data-theme="light">
+              <div class="theme-preview light-preview"></div>
+              <div class="theme-name">亮色</div>
+            </div>
+            <div class="theme-option" data-theme="dark">
+              <div class="theme-preview dark-preview"></div>
+              <div class="theme-name">暗色</div>
+            </div>
+            <div class="theme-option" data-theme="pink-blue">
+              <div class="theme-preview pink-blue-preview"></div>
+              <div class="theme-name">粉蓝搭配</div>
+            </div>
+            <div class="theme-option" data-theme="pink-black">
+              <div class="theme-preview pink-black-preview"></div>
+              <div class="theme-name">粉黑搭配</div>
+            </div>
+            <div class="theme-option" data-theme="white-pink">
+              <div class="theme-preview white-pink-preview"></div>
+              <div class="theme-name">白粉搭配</div>
+            </div>
+            <div class="theme-option" data-theme="purple-blue">
+              <div class="theme-preview purple-blue-preview"></div>
+              <div class="theme-name">紫蓝搭配</div>
+            </div>
+            <div class="theme-option" data-theme="system">
+              <div class="theme-preview system-preview"></div>
+              <div class="theme-name">跟随系统</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="settings-section">
+          <h3>路径设置</h3>
+          <div class="path-setting">
+            <button id="default-path-btn" class="settings-btn">
+              <span class="settings-btn-icon">📁</span>设置默认路径
+            </button>
+            <div id="default-path-display">未设置</div>
+          </div>
+        </div>
+        
+        <div class="settings-section">
+          <h3>权限设置</h3>
+          <div class="permission-setting">
+            <div class="setting-item">
+              <label for="confirm-delete">删除前确认</label>
+              <input type="checkbox" id="confirm-delete" checked>
+            </div>
+            
+            <h4>限制访问目录</h4>
+            <div id="restricted-paths">
+              <!-- Restricted paths will be added here -->
+            </div>
+            <button id="add-restricted-path" class="settings-btn">
+              <span class="settings-btn-icon">🔒</span>添加限制目录
+            </button>
+          </div>
+        </div>
+        
+        <div class="settings-section">
+          <h3 class="conversion-title">格式转换设置</h3>
+          <div class="conversion-setting">
+            <div class="setting-item">
+              <label for="default-image-format">默认图片转换格式</label>
+              <select id="default-image-format">
+                <option value="webp">WebP - 高效压缩图像格式</option>
+                <option value="jpg">JPG - 常用有损压缩格式</option>
+                <option value="png">PNG - 无损压缩透明背景</option>
+              </select>
+              <div class="format-info">推荐使用WebP格式，体积更小，画质更好</div>
+            </div>
+            
+            <div class="setting-item">
+              <label for="default-video-format">默认视频转换格式</label>
+              <select id="default-video-format">
+                <option value="mp4">MP4 - 高兼容性视频格式</option>
+                <option value="webm">WebM - 开源高压缩视频格式</option>
+              </select>
+              <div class="format-info">MP4格式兼容性更好，WebM格式体积更小</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="settings-section">
+          <h3>关于</h3>
+          <div class="about-content">
+            <div class="app-logo">「零」文件</div>
+            <div class="app-version">Version 1.0.0</div>
+            <div class="app-connection">BUG反馈：lingling195@qq.com</div>
+            <div class="app-copyright">——皊零 © 2024-2025</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Media player -->
+      <div class="media-player collapsed" id="media-player">
+        <div class="media-player-header">
+          <div class="media-title-container">
+            <span id="media-title">未播放媒体</span>
+          </div>
+          <div class="media-controls">
+            <button id="media-fullscreen" title="全屏">⛶</button>
+            <button id="media-expand" title="展开/收起">⬆️</button>
+            <button id="media-close" title="关闭">✖️</button>
+          </div>
+        </div>
+        
+        <div class="media-player-content">
+          <div class="media-container" id="media-container" style="display:flex;align-items:center;justify-content:center;width:100%;text-align:center;">
+            <!-- Media element will be inserted here -->
+          </div>
+          
+          <!-- <div class="media-info-panel">
+            <div class="lyrics-container hidden" id="lyrics-container"> -->
+              <!-- Lyrics will be inserted here -->
+            <!-- </div>
+          </div> -->
+        </div>
+        
+        <div class="media-progress-container">
+          <div class="media-time" id="media-current-time">00:00</div>
+          <div class="media-progress">
+            <div class="media-progress-bar" id="media-progress-bar"></div>
+            <div class="media-progress-handle" id="media-progress-handle"></div>
+          </div>
+          <div class="media-time" id="media-duration">00:00</div>
+        </div>
+      </div>
+
+      <!-- Recycle bin view -->
+      <div class="view-container hidden" id="recycle-view">
+        <h2>回收站</h2>
+        <div class="recycle-controls">
+          <button id="empty-recycle-bin">
+            <span class="settings-btn-icon">🗑️</span>清空回收站
+          </button>
+        </div>
+        <div id="recycle-file-list" class="file-list">
+          <!-- Recycled files will be dynamically added here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Context menu -->
+  <div id="context-menu" class="context-menu hidden">
+    <div class="context-menu-item" data-action="open">
+      <span class="context-menu-icon">📄</span>直接打开
+    </div>
+    <div class="context-menu-item" data-action="open-external">
+      <span class="context-menu-icon">🌐</span>外部打开
+    </div>
+    <div class="context-menu-item" data-action="open-in-explorer">
+      <span class="context-menu-icon">📂</span>在资源管理器中打开
+    </div>
+    <div class="context-menu-separator"></div>
+    <div class="context-menu-item" data-action="copy">
+      <span class="context-menu-icon">📋</span>复制
+    </div>
+    <div class="context-menu-item" data-action="move">
+      <span class="context-menu-icon">✂️</span>移动
+    </div>
+    <div class="context-menu-item" data-action="paste">
+      <span class="context-menu-icon">📌</span>粘贴
+    </div>
+    <div class="context-menu-separator"></div>
+    <div class="context-menu-item" data-action="refresh">
+      <span class="context-menu-icon">🔄</span>刷新
+    </div>
+    <div class="context-menu-item" data-action="convert">
+      <span class="context-menu-icon">🔄</span>转换
+    </div>
+    <div class="context-menu-item" data-action="compress">
+      <span class="context-menu-icon">📦</span>压缩
+    </div>
+    <div class="context-menu-separator"></div>
+    <div class="context-menu-item dangerous" data-action="recycle">
+      <span class="context-menu-icon">🗑️</span>移入回收站
+    </div>
+    <div class="context-menu-item dangerous" data-action="delete">
+      <span class="context-menu-icon">❌</span>彻底删除
+    </div>
+    <div class="context-menu-separator"></div>
+    <div class="context-menu-item" data-action="properties">
+      <span class="context-menu-icon">ℹ️</span>属性
+    </div>
+  </div>
+
+  <!-- Modal dialogs -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <!-- Convert dialog -->
+    <div id="convert-dialog" class="modal-dialog hidden">
+      <div class="modal-header">
+        <h3>转换文件</h3>
+        <button class="modal-close">✕</button>
+      </div>
+      <div class="modal-content">
+        <div class="convert-options">
+          <label>目标格式:</label>
+          <select id="convert-format">
+            <!-- Options will be dynamically populated based on file type -->
+          </select>
+          <div id="convert-settings">
+            <!-- Additional settings will be added here based on format -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="convert-cancel" class="btn-secondary">取消</button>
+        <button id="convert-confirm" class="btn-primary">转换</button>
+      </div>
+    </div>
+
+    <!-- Properties dialog -->
+    <div id="properties-dialog" class="modal-dialog hidden">
+      <div class="modal-header">
+        <h3>文件属性</h3>
+        <button class="modal-close">✕</button>
+      </div>
+      <div class="modal-content">
+        <div id="file-properties">
+          <!-- Properties will be dynamically added here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="js/app.js"></script>
+  <!-- Debug Tools -->
+  <script type="module" src="js/debug-tools.js"></script>
+</body>
+</html>

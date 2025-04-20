@@ -1,0 +1,68 @@
+{
+  "name": "lingpro",
+  "version": "1.0.0",
+  "description": "A file manager",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "build": "electron-builder --win --x64"
+  },
+  "author": "Ling",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^35.1.5",
+    "electron-builder": "^24.6.4"
+  },
+  "dependencies": {
+    "fs-extra": "^11.2.0",
+    "chokidar": "^3.6.0",
+    "sharp": "^0.33.3",
+    "ffmpeg-static": "^5.2.0",
+    "pdf-lib": "^1.17.1",
+    "jszip": "^3.10.1",
+    "lowdb": "^6.1.1",
+    "preact": "^10.19.6",
+    "immer": "^10.0.4"
+  },
+  "build": {
+    "appId": "com.ling.filemanager",
+    "productName": "「零」文件",
+    "copyright": "Copyright © 2024-2025 Ling",
+    "directories": {
+      "output": "build"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "portable": {
+      "artifactName": "「零」文件-便携版-${version}.exe"
+    },
+    "files": [
+      "**/*",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+      "!**/node_modules/.bin",
+      "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
+      "!.github",
+      "!.idea",
+      "!.vscode",
+      "!docs",
+      "!**/._*",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}"
+    ]
+  }
+}
